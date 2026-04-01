@@ -1,5 +1,5 @@
 # IGDEngine  
--A lightweight 2D game engine written in C++, built as a course project for Interactive Game Design.
+- A lightweight 2D game engine written in C++, built as a course project for Interactive Game Design.
 
 ## Features  
 - Core game loop with delta time
