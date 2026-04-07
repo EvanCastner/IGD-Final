@@ -6,9 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SDL2 CONFIG REQUIRED)
 
-set(ENGINE_SOURCE
-    ${CMAKE_CURRENT_LIST_DIR}/src/engine.cpp
+file(GLOB_RECURSE ENGINE_SOURCE
+    ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
 )
+
 add_library(engine STATIC ${ENGINE_SOURCE})
 
 target_include_directories(engine PUBLIC
