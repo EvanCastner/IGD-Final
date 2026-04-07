@@ -4,7 +4,7 @@ project(GameEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(SDL2 CONFIG REQUIRED)
+find_package(SDL2 REQUIRED)
 
 file(GLOB_RECURSE ENGINE_SOURCE
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
@@ -14,6 +14,7 @@ add_library(engine STATIC ${ENGINE_SOURCE})
 
 target_include_directories(engine PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src
+    ${SDL2_INCLUDE_DIRS}
 )
 
 # Main executable
@@ -23,6 +24,5 @@ add_executable(GameEngine
 
 target_link_libraries(GameEngine PRIVATE 
     engine
-    SDL2::SDL2
-    SDL2::SDL2main
+    ${SDL2_LIBRARIES}
 )
