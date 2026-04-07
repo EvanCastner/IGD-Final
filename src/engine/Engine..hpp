@@ -10,6 +10,8 @@ public:
     Engine();
     ~Engine();
 
+    void Run();
+
 private:
     void Initialise();
     void HandleEvents();

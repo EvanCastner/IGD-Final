@@ -56,6 +56,14 @@ void Engine::HandleEvents()
 
 void Engine::Update(float deltaTime)
 {
+    for (auto &entity : entities)
+    {
+        entity.Update(deltaTime);
+    }
+}
+
+void Engine::Run()
+{
     Initialise();
 
     Uint32 lastTime = SDL_GetTicks();
