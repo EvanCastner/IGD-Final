@@ -36,7 +36,7 @@ void Engine::Initialise()
     player.AddComponent<Transform>();
     player.AddComponent<PlayerMovement>();
 
-    entities.push_back(player);
+    entities.push_back(std::move(player));
 
     std::cout << "Engine Initialised\n";
 }
