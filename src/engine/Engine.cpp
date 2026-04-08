@@ -33,8 +33,8 @@ void Engine::Initialise()
     running = true;
 
     Entity player;
-    player.AddComponent<Transform>();
-    player.AddComponent<PlayerMovement>();
+    player.GetComponent<Transform>();
+    player.GetComponent<PlayerMovement>();
 
     entities.push_back(std::move(player));
 

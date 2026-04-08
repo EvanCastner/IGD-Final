@@ -14,7 +14,9 @@ public:
     {
         const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-        Transform *transform = owner->AddComponent<Transform>(); // TEMP
+        Transform *transform = owner->GetComponent<Transform>();
+        if (!transform)
+            return;
 
         if (keys[SDL_SCANCODE_W])
             transform->y -= speed * deltaTime;

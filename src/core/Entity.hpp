@@ -11,7 +11,7 @@ private:
 
 public:
     template <typename T, typename... Args>
-    T *AddComponent(Args &&...args)
+    T *GetComponent(Args &&...args)
     {
         T *component = new T(std::forward<Args>(args)...);
         component->owner = this;
