@@ -3,7 +3,7 @@
 //            runs a basic event loop, then shuts down cleanly.
 // INTERACTS WITH: engine.hpp, SDL2 (external)
 
-#include "engine/Engine..hpp"
+#include "engine/Engine.hpp"
 
 int main()
 {
