@@ -1,3 +1,10 @@
+// FILE     : components/PlayerMovement.hpp
+// PURPOSE  : Moves the owning Entity's Transform each frame
+//            based on WASD keyboard input. Speed is expressed
+//            in pixels per second and scaled by deltaTime.
+// DEPENDS  : core/Component.hpp, core/Entity.hpp,
+//            components/Transform.hpp, SDL2 (external)
+
 #pragma once
 
 #include "../core/Component.hpp"

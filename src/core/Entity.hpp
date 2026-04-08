@@ -1,3 +1,9 @@
+// FILE     : core/Entity.hpp
+// PURPOSE  : Represents a game object as a container of
+//            Components. Supports adding, querying, and ticking
+//            components each frame via Update().
+// DEPENDS  : core/Component.hpp
+
 #pragma once
 
 #include "Component.hpp"

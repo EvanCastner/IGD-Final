@@ -1,3 +1,11 @@
+// FILE     : engine/Engine.cpp
+// PURPOSE  : Implementation of the core Engine class. Handles
+//            SDL2 initialisation, the main loop, event polling,
+//            entity updates, and clean shutdown.
+// DEPENDS  : engine/Engine.hpp, components/Transform.hpp,
+//            components/PlayerMovement.hpp, SDL2 (external)
+
+
 #include "Engine.hpp"
 #include "../components/Transform.hpp"
 #include "../components/PlayerMovement.hpp"

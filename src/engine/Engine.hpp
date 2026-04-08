@@ -1,3 +1,8 @@
+// FILE     : engine/Engine.hpp
+// PURPOSE  : Core engine class. Manages the main loop, window
+//            lifecycle, event handling, and entity storage.
+// DEPENDS  : core/Entity.hpp, SDL2 (external)
+
 #pragma once
 
 #include "../core/Entity.hpp"
