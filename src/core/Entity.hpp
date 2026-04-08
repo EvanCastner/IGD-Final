@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Component.hpp"
 #include <vector>
 #include <memory>
