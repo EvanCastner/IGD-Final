@@ -9,6 +9,9 @@
 #include "Engine.hpp"
 #include "../components/Transform.hpp"
 #include "../components/PlayerMovement.hpp"
+#include "imgui.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_sdlrenderer2.h"
 #include <iostream>
 
 Engine::Engine() : running(false), window(nullptr) {}
@@ -69,6 +72,31 @@ void Engine::Update(float deltaTime)
     for (auto &entity : entities)
     {
         entity.Update(deltaTime);
+    }
+}
+
+// Render - clear screen, draw ImGui panels, present
+void Engine::Render() {
+
+    ImGui_ImplSDLRenderer2_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+
+    // Menu Bar
+    if (ImGui::BeginMainMenuBar()) 
+    {
+        if (ImGui:: BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Quit")) 
+                running = false;
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Edit"))
+        {
+            IGui::MenuItem("Settiings (coming soon)", nullptr, false, false);
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
     }
 }
 
