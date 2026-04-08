@@ -9,6 +9,7 @@
 #include "Component.hpp"
 #include <vector>
 #include <memory>
+#include <string>
 
 class Entity
 {
@@ -16,6 +17,8 @@ private:
     std::vector<std::unique_ptr<Component>> components;
 
 public:
+    std::string name;
+
     // Prevent copying and allow moving
     Entity() = default;
     Entity(const Entity &) = delete;
