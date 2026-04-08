@@ -21,9 +21,13 @@ private:
     void Initialise();
     void HandleEvents();
     void Update(float deltaTime);
+    void Render();
     void Shutdown();
 
     bool running;
     SDL_Window *window;
+    SDL_Renderer* renderer;
+    int selectedEntity;
+    
     std::vector<Entity> entities;
 };
