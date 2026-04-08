@@ -5,7 +5,7 @@ class Entity; // Forward Declaration
 class Component
 {
 public:
-    Entity *owner;
+    Entity *owner = nullptr;
 
     virtual void Start() {}
     virtual void Update(float deltaTime) {}

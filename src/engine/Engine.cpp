@@ -32,11 +32,13 @@ void Engine::Initialise()
 
     running = true;
 
-    Entity player;
-    player.GetComponent<Transform>();
-    player.GetComponent<PlayerMovement>();
+    entities.reserve(100);
 
-    entities.push_back(std::move(player));
+    entities.emplace_back();
+    Entity &player = entities.back();
+
+    player.AddComponent<Transform>();
+    player.AddComponent<PlayerMovement>();
 
     std::cout << "Engine Initialised\n";
 }
@@ -47,7 +49,7 @@ void Engine::HandleEvents()
     while (SDL_PollEvent(&event))
     {
         if (event.type == SDL_QUIT)
-            running == false;
+            running = false;
 
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
             running = false;
@@ -84,6 +86,7 @@ void Engine::Shutdown()
     if (window)
     {
         SDL_DestroyWindow(window);
+        window = nullptr;
     }
-    SDL_QUIT;
+    SDL_Quit();
 }

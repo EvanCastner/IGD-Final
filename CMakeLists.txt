@@ -10,6 +10,8 @@ file(GLOB_RECURSE ENGINE_SOURCE
     ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
 )
 
+list(REMOVE_ITEM ENGINE_SOURCE ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp)
+
 add_library(engine STATIC ${ENGINE_SOURCE})
 
 target_include_directories(engine PUBLIC
