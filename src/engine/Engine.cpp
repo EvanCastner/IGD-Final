@@ -82,6 +82,10 @@ void Engine::Render()
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
+    // Get window size
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+
     // Menu Bar
     if (ImGui::BeginMainMenuBar())
     {
@@ -99,9 +103,12 @@ void Engine::Render()
         ImGui::EndMainMenuBar();
     }
 
+    float panelWidth = 220.0f;
+    float panelHeight = h - 20.0f;
+
     // Hierarchy Panel
     ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(220, 770), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
     ImGui::Begin("Heirarchy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
     for (int i = 0; i < (int)entities.size(); i++)
@@ -145,6 +152,8 @@ void Engine::Render()
     SDL_RenderClear(renderer);
     ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
     SDL_RenderPresent(renderer);
+
+    std::cout << "ImGui frame started\n";
 }
 
 void Engine::Run()
@@ -161,6 +170,7 @@ void Engine::Run()
 
         HandleEvents();
         Update(deltaTime);
+        Render();
     }
 }
 
