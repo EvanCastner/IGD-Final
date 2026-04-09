@@ -129,7 +129,7 @@ void Engine::Render()
         {
             ImGui::Text("Transform");
             ImGui::DragFloat("X", &transform->x, 1.0f);
-            ImGui::DragFloat("Y", % transfrom->y, 1.0f);
+            ImGui::DragFloat("Y", &transform->y, 1.0f);
         }
     }
     else
