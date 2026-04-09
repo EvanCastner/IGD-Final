@@ -40,13 +40,26 @@ void Engine::Initialise()
         return;
     }
 
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if (!renderer)
+    {
+        std::cerr << "Renderer creation failed: " << SDL_GetError() << std::endl;
+        return;
+    }
+
+    // ImGui Setup
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer2_Init(renderer);
+
     running = true;
-
     entities.reserve(100);
-
     entities.emplace_back();
-    Entity &player = entities.back();
 
+    Entity &player = entities.back();
+    player.name = "Player";
     player.AddComponent<Transform>();
     player.AddComponent<PlayerMovement>();
 
@@ -152,8 +165,6 @@ void Engine::Render()
     SDL_RenderClear(renderer);
     ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
     SDL_RenderPresent(renderer);
-
-    std::cout << "ImGui frame started\n";
 }
 
 void Engine::Run()
