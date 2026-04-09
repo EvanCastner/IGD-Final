@@ -138,6 +138,13 @@ void Engine::Render()
     }
 
     ImGui::End();
+
+    // Render
+    ImGui::Render();
+    SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
+    SDL_RenderClear(renderer);
+    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
+    SDL_RenderPresent(renderer);
 }
 
 void Engine::Run()
