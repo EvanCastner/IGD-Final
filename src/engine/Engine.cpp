@@ -110,6 +110,34 @@ void Engine::Render()
         if (ImGui::Selectable(entities[i].name.c_str(), selected))
             selectedEntity = i;
     }
+
+    ImGui::End();
+
+    // Inspector Panel
+    ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(220, 770), ImGuiCond_Always);
+    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+
+    if (selectedEntity >= 0 && selectedEntity < (int)entities.size())
+    {
+        Entity &entity = entities[selectedEntity];
+        ImGui::Text("Name: %s", entity.name.c_str());
+        ImGui::Separator();
+
+        Transform *transform = entity.GetComponent<Transform>();
+        if (transform)
+        {
+            ImGui::Text("Transform");
+            ImGui::DragFloat("X", &transform->x, 1.0f);
+            ImGui::DragFloat("Y", % transfrom->y, 1.0f);
+        }
+    }
+    else
+    {
+        ImGui::Text("No entity selected");
+    }
+
+    ImGui::End();
 }
 
 void Engine::Run()
