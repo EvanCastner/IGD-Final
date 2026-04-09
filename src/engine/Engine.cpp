@@ -5,7 +5,6 @@
 // DEPENDS  : engine/Engine.hpp, components/Transform.hpp,
 //            components/PlayerMovement.hpp, SDL2 (external)
 
-
 #include "Engine.hpp"
 #include "../components/Transform.hpp"
 #include "../components/PlayerMovement.hpp"
@@ -76,27 +75,40 @@ void Engine::Update(float deltaTime)
 }
 
 // Render - clear screen, draw ImGui panels, present
-void Engine::Render() {
+void Engine::Render()
+{
 
     ImGui_ImplSDLRenderer2_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
     // Menu Bar
-    if (ImGui::BeginMainMenuBar()) 
+    if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui:: BeginMenu("File"))
+        if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("Quit")) 
+            if (ImGui::MenuItem("Quit"))
                 running = false;
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit"))
         {
-            IGui::MenuItem("Settiings (coming soon)", nullptr, false, false);
+            ImGui::MenuItem("Settiings (coming soon)", nullptr, false, false);
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
+    }
+
+    // Hierarchy Panel
+    ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(220, 770), ImGuiCond_Always);
+    ImGui::Begin("Heirarchy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+
+    for (int i = 0; i < (int)entities.size(); i++)
+    {
+        bool selected = (selectedEntity == i);
+        if (ImGui::Selectable(entities[i].name.c_str(), selected))
+            selectedEntity = i;
     }
 }
 
