@@ -96,9 +96,10 @@ void Engine::Render()
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    // Get window size
-    int w, h;
-    SDL_GetWindowSize(window, &w, &h);
+    const float W = 1200.0f;
+    const float H = 720.0f;
+    const float panelWidth = 220.0f;
+    const float panelHeight = H - 20.0f;
 
     // Menu Bar
     if (ImGui::BeginMainMenuBar())
@@ -117,9 +118,6 @@ void Engine::Render()
         ImGui::EndMainMenuBar();
     }
 
-    float panelWidth = 220.0f;
-    float panelHeight = h - 20.0f;
-
     // Hierarchy Panel
     ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
@@ -135,8 +133,8 @@ void Engine::Render()
     ImGui::End();
 
     // Inspector Panel
-    ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(220, 770), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(W - panelWidth, 20), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
     ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
     if (selectedEntity >= 0 && selectedEntity < (int)entities.size())
