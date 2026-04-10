@@ -163,6 +163,24 @@ void Engine::Render()
     ImGui::Render();
     SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
     SDL_RenderClear(renderer);
+
+    // Draw all entites that have a transform
+    for (auto &entity : entities)
+    {
+        Transform *transform = entity.GetComponent<Transform>();
+        if (!transform)
+            continue;
+
+        // Offset by panel width so player start in the middle viewport
+        SDL_Rect rect;
+        rect.x = (int)(panelWidth + transform->x);
+        rect.y = (int)(menuHeight + transform->y);
+        rect.w = 400;
+        rect.h = 40;
+
+        SDL_SetRenderDrawColor(renderer, 255, 100, 100, 255);
+        SDL_RenderFillRect(renderer, &rect);
+    }
     ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
     SDL_RenderPresent(renderer);
 }
