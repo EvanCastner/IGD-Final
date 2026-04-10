@@ -32,7 +32,7 @@ void Engine::Initialise()
         "GameEngine",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         1200, 720,
-        SDL_WINDOW_SHOWN);
+        SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
 
     if (!window)
     {
@@ -96,8 +96,10 @@ void Engine::Render()
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    const float W = 1200.0f;
-    const float H = 720.0f;
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+    const float W = (float)w;
+    const float H = (float)h;
     const float panelWidth = 220.0f;
     const float panelHeight = H - 20.0f;
 
@@ -121,7 +123,7 @@ void Engine::Render()
     // Hierarchy Panel
     ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
-    ImGui::Begin("Heirarchy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+    ImGui::Begin("Heirarchy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
     for (int i = 0; i < (int)entities.size(); i++)
     {
@@ -135,7 +137,7 @@ void Engine::Render()
     // Inspector Panel
     ImGui::SetNextWindowPos(ImVec2(W - panelWidth, 20), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
-    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
     if (selectedEntity >= 0 && selectedEntity < (int)entities.size())
     {
