@@ -124,11 +124,35 @@ void Engine::Render()
     ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
     ImGui::Begin("Heirarchy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
+    // Add entity button
+    if (ImGui::Button("Add Entity", ImVec2(-1, 0)))
+    {
+        entities.emplace_back();
+        Entity &newEntity = entities.back();
+        newEntity.name = "Entity: " + std::to_string(entities.size() - 1);
+        newEntity.AddComponent<Transform>();
+        selectedEntity = (int)entities.size() - 1;
+    }
+
+    ImGui::Separator();
+
+    // Entity List
     for (int i = 0; i < (int)entities.size(); i++)
     {
         bool selected = (selectedEntity == i);
         if (ImGui::Selectable(entities[i].name.c_str(), selected))
             selectedEntity = i;
+    }
+
+    // Remove entity button
+    if (selectedEntity >= 0 && selectedEntity < (int)entities.size())
+    {
+        ImGui::Separator();
+        if (ImGui::Button("Remove Entity", ImVec2(-1, 0)))
+        {
+            entities.erase(entities.begin() + selectedEntity);
+            selectedEntity = -1;
+        }
     }
 
     ImGui::End();
