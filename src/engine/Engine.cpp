@@ -178,7 +178,7 @@ void Engine::Render()
         ImGui::SameLine();
         if (ImGui::RadioButton("Circle", entity.shape == Shape::Circle))
             entity.shape = Shape::Circle;
-        
+
         ImGui::Separator();
 
         Transform *transform = entity.GetComponent<Transform>();
@@ -208,31 +208,33 @@ void Engine::Render()
         if (!transform)
             continue;
 
-            int x = (int)(panelWidth + transform->x);
-            int y = (int)(panelHeight + transform->y);
+        int x = (int)(panelWidth + transform->x);
+        int y = (int)(panelHeight + transform->y);
 
-            SDL_SetRenderDrawColor(renderer, 255, 100, 100, 255);
+        SDL_SetRenderDrawColor(renderer, 255, 100, 100, 255);
 
-            if (entity.shape == Shape::Rectangle)
+        if (entity.shape == Shape::Rectangle)
+        {
+            SDL_Rect rect = {x, y, 80, 40};
+            SDL_RenderFillRect(renderer, &rect);
+        }
+        else if (entity.shape == Shape::Square)
+        {
+            SDL_Rect rect = {x, y, 40, 40};
+            SDL_RenderFillRect(renderer, &rect);
+        }
+        else if (entity.shape == Shape::Circle)
+        {
+            // Build circle with points since SDL Does not have one
+            int radius = 20;
+            for (int dy = -radius; dy <= radius; dy++)
             {
-                SDL_Rect rect = {x, y, 60, 40};
-                SDL_RenderFillRect(renderer, &rect);
+                int dx = (int)sqrt((double)(radius * radius - dy * dy));
+                SDL_RenderDrawLine(renderer,
+                                   x - dx, y + dy,
+                                   x + dx, y + dy);
             }
-            else if (entity.shape == Shape::Square)
-            {
-                SDL_Rect rect = {x, y, 40, 40};
-                SDL_RenderFillRect(renderer, &rect);
-            }
-            else if (entity.shape == Shape::Circle)
-            {
-                // Build circle with points since SDL Does not have one
-                int radius = 20;
-                for (int dy = -radius; dy <= radius; dy++)
-                {
-                    int dx = (int)sqrt((double)(radius * radius - dy * dx));
-                    SDL_RenderDrawLine(renderer, x - dx, y + dy, x + dx, y + dy);
-                }
-            }
+        }
     }
     ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
     SDL_RenderPresent(renderer);
