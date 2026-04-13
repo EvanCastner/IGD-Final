@@ -168,6 +168,19 @@ void Engine::Render()
         ImGui::Text("Name: %s", entity.name.c_str());
         ImGui::Separator();
 
+        // Shape Selector
+        ImGui::Text("Shape");
+        if (ImGui::RadioButton("Rectangle", entity.shape == Shape::Rectangle))
+            entity.shape = Shape::Rectangle;
+        ImGui::SameLine();
+        if (ImGui::RadioButton("Square", entity.shape == Shape::Square))
+            entity.shape = Shape::Square;
+        ImGui::SameLine();
+        if (ImGui::RadioButton("Circle", entity.shape == Shape::Circle))
+            entity.shape = Shape::Circle;
+        
+        ImGui::Separator();
+
         Transform *transform = entity.GetComponent<Transform>();
         if (transform)
         {
@@ -195,15 +208,31 @@ void Engine::Render()
         if (!transform)
             continue;
 
-        // Offset by panel width so player start in the middle viewport
-        SDL_Rect rect;
-        rect.x = (int)(panelWidth + transform->x);
-        rect.y = (int)(menuHeight + transform->y);
-        rect.w = 400;
-        rect.h = 40;
+            int x = (int)(panelWidth + transform->x);
+            int y = (int)(panelHeight + transform->y);
 
-        SDL_SetRenderDrawColor(renderer, 255, 100, 100, 255);
-        SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 255, 100, 100, 255);
+
+            if (entity.shape == Shape::Rectangle)
+            {
+                SDL_Rect rect = {x, y, 60, 40};
+                SDL_RenderFillRect(renderer, &rect);
+            }
+            else if (entity.shape == Shape::Square)
+            {
+                SDL_Rect rect = {x, y, 40, 40};
+                SDL_RenderFillRect(renderer, &rect);
+            }
+            else if (entity.shape == Shape::Circle)
+            {
+                // Build circle with points since SDL Does not have one
+                int radius = 20;
+                for (int dy = -radius; dy <= radius; dy++)
+                {
+                    int dx = (int)sqrt((double)(radius * radius - dy * dx));
+                    SDL_RenderDrawLine(renderer, x - dx, y + dy, x + dx, y + dy);
+                }
+            }
     }
     ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
     SDL_RenderPresent(renderer);

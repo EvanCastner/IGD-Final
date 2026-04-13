@@ -11,12 +11,22 @@
 #include <memory>
 #include <string>
 
+enum class Shape
+{
+    Rectangle,
+    Square,
+    Circle
+};
+
 class Entity
 {
 private:
     std::vector<std::unique_ptr<Component>> components;
 
 public:
+
+    Shape shape = Shape::Rectangle;
+    
     std::string name;
 
     // Prevent copying and allow moving
