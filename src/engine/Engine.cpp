@@ -164,7 +164,8 @@ void Engine::Render()
     for (int i = 0; i < (int)entities.size(); i++)
     {
         bool selected = (selectedEntity == i);
-        if (ImGui::Selectable(entities[i].name.c_str(), selected))
+        std::string displayName = entities[i].name.empty() ? "(unnamed)" : entities[i].name;
+        if (ImGui::Selectable(displayName.c_str(), selected))
             selectedEntity = i;
     }
 
@@ -189,7 +190,12 @@ void Engine::Render()
     if (selectedEntity >= 0 && selectedEntity < (int)entities.size())
     {
         Entity &entity = entities[selectedEntity];
-        ImGui::Text("Name: %s", entity.name.c_str());
+        // ImGui::Text("Name: %s", entity.name.c_str());
+        char nameBuf[64];
+        strncpy(nameBuf, entity.name.c_str(), sizeof(nameBuf));
+        nameBuf[sizeof(nameBuf) - 1] = '\0';
+        if (ImGui::InputText("##name", nameBuf, sizeof(nameBuf)))
+            entity.name = nameBuf;
         ImGui::Separator();
 
         // Shape Selector
