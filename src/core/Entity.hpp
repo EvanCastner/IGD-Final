@@ -27,9 +27,14 @@ public:
     Shape shape = Shape::Rectangle;
 
     std::string name;
+
+    // Entity size and color attributes
     float width = 80.0f;
     float height = 40.0f;
     float radius = 20.0f;
+    float colorR = 1.0f;
+    float colorG = 0.39f;
+    float colorB = 0.39f;
 
     // Prevent copying and allow moving
     Entity() = default;

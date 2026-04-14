@@ -235,6 +235,16 @@ void Engine::Render()
         {
             ImGui::DragFloat("Radius", &entity.radius, 1.0f, 1.0f, 500.0f);
         }
+
+        ImGui::Separator();
+        ImGui::Text("Color");
+        float color[3] = {entity.colorR, entity.colorG, entity.colorB};
+        if (ImGui::ColorEdit3("##color", color))
+        {
+            entity.colorR = color[0];
+            entity.colorG = color[1];
+            entity.colorB = color[2];
+        }
     }
     else
     {
@@ -258,7 +268,11 @@ void Engine::Render()
         int x = (int)(panelWidth + transform->x);
         int y = (int)(menuHeight + transform->y);
 
-        SDL_SetRenderDrawColor(renderer, 255, 100, 100, 255);
+        SDL_SetRenderDrawColor(renderer,
+                               (Uint8)(entity.colorR * 255),
+                               (Uint8)(entity.colorG * 255),
+                               (Uint8)(entity.colorB * 255),
+                               255);
 
         if (entity.shape == Shape::Rectangle)
         {
