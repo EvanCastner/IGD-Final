@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/GameEngine.dir/src/main.cpp.o -o GameEngine  libengine.a libimgui.a /usr/lib/x86_64-linux-gnu/libSDL2.so 
