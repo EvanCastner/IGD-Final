@@ -24,10 +24,12 @@ private:
     std::vector<std::unique_ptr<Component>> components;
 
 public:
-
     Shape shape = Shape::Rectangle;
-    
+
     std::string name;
+    float width = 80.0f;
+    float height = 40.0f;
+    float radius = 20.0f;
 
     // Prevent copying and allow moving
     Entity() = default;

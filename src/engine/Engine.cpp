@@ -218,6 +218,23 @@ void Engine::Render()
             ImGui::DragFloat("X", &transform->x, 1.0f);
             ImGui::DragFloat("Y", &transform->y, 1.0f);
         }
+
+        ImGui::Separator();
+        ImGui::Text("Size");
+        if (entity.shape == Shape::Rectangle)
+        {
+            ImGui::DragFloat("Width", &entity.width, 1.0f, 1.0f, 1000.0f);
+            ImGui::DragFloat("Height", &entity.height, 1.0f, 1.0f, 1000.0f);
+        }
+        else if (entity.shape == Shape::Square)
+        {
+            ImGui::DragFloat("Size", &entity.width, 1.0f, 1.0f, 1000.0f);
+            entity.height = entity.width;
+        }
+        else if (entity.shape == Shape::Circle)
+        {
+            ImGui::DragFloat("Radius", &entity.radius, 1.0f, 1.0f, 500.0f);
+        }
     }
     else
     {
@@ -245,18 +262,18 @@ void Engine::Render()
 
         if (entity.shape == Shape::Rectangle)
         {
-            SDL_Rect rect = {x, y, 80, 40};
+            SDL_Rect rect = {x, y, (int)entity.width, (int)entity.height};
             SDL_RenderFillRect(renderer, &rect);
         }
         else if (entity.shape == Shape::Square)
         {
-            SDL_Rect rect = {x, y, 40, 40};
+            SDL_Rect rect = {x, y, (int)entity.width, (int)entity.width};
             SDL_RenderFillRect(renderer, &rect);
         }
         else if (entity.shape == Shape::Circle)
         {
             // Build circle with points since SDL Does not have one
-            int radius = 20;
+            int radius = (int)entity.radius;
             for (int dy = -radius; dy <= radius; dy++)
             {
                 int dx = (int)sqrt((double)(radius * radius - dy * dy));
