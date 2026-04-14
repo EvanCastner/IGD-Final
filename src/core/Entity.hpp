@@ -40,6 +40,9 @@ public:
     bool solid = false;
     bool colliding = false;
 
+    // Set a end goal
+    bool isGoal = false;
+
     // Prevent copying and allow moving
     Entity() = default;
     Entity(const Entity &) = delete;

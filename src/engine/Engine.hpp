@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../core/Entity.hpp"
+#include "runtime/SceneData.hpp"
 #include <SDL2/SDL.h>
 #include <vector>
 
@@ -17,6 +18,8 @@ public:
 
     void Run();
 
+    SceneData CaptureScene();
+
 private:
     void Initialise();
     void HandleEvents();
@@ -26,7 +29,6 @@ private:
     void Shutdown();
 
     bool running;
-    bool colliding = false;
     SDL_Window *window;
     SDL_Renderer *renderer;
     int selectedEntity;

@@ -269,6 +269,7 @@ void Engine::Render()
 
         ImGui::Separator();
         ImGui::Checkbox("Solid", &entity.solid);
+        ImGui::Checkbox("Goal", &entity.isGoal);
     }
     else
     {
@@ -379,4 +380,33 @@ void Engine::Shutdown()
         window = nullptr;
     }
     SDL_Quit();
+}
+
+SceneData Engine::CaptureScene()
+{
+    SceneData data;
+    for (auto &entity : entities)
+    {
+        Transform *t = entity.GetComponent<Transform>();
+        if (!t)
+            continue;
+
+        EntityData ed;
+        ed.name = entity.name;
+        ed.x = t->x;
+        ed.y = t->y;
+        ed.width = entity.width;
+        ed.height = entity.height;
+        ed.radius = entity.radius;
+        ed.colorR = entity.colorR;
+        ed.colorG = entity.colorG;
+        ed.colorB = entity.colorB;
+        ed.shape = entity.shape;
+        ed.solid = entity.solid;
+        ed.isGoal = entity.isGoal;
+        ed.hasPlayerMovement = entity.GetComponent<PlayerMovement>() != nullptr;
+        data.entities.push_back(ed);
+    }
+
+    return data;
 }
