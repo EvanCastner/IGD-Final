@@ -77,6 +77,30 @@ void Engine::HandleEvents()
 
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
             running = false;
+
+        // Click in viewport to place selected entity
+        if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+        {
+            float panelWidth = 300.0f;
+            float menuHeight = ImGui::GetFrameHeight();
+            float W = ImGui::GetIO().DisplaySize.x;
+
+            int mx = event.button.x;
+            int my = event.button.y;
+
+            // Only if click is inside the viewport
+            bool inViewport = mx > panelWidth && mx < (W - panelWidth) && my > menuHeight;
+
+            if (inViewport && selectedEntity >= 0 && selectedEntity < (int)entities.size())
+            {
+                Transform *t = entities[selectedEntity].GetComponent<Transform>();
+                if (t)
+                {
+                    t->x = (float)(mx - panelWidth);
+                    t->y = (float)(my - menuHeight);
+                }
+            }
+        }
     }
 }
 
@@ -209,7 +233,7 @@ void Engine::Render()
             continue;
 
         int x = (int)(panelWidth + transform->x);
-        int y = (int)(panelHeight + transform->y);
+        int y = (int)(menuHeight + transform->y);
 
         SDL_SetRenderDrawColor(renderer, 255, 100, 100, 255);
 
