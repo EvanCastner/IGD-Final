@@ -21,13 +21,15 @@ private:
     void Initialise();
     void HandleEvents();
     void Update(float deltaTime);
+    bool CheckCollision(Entity &a, Entity &b);
     void Render();
     void Shutdown();
 
     bool running;
+    bool colliding = false;
     SDL_Window *window;
-    SDL_Renderer* renderer;
+    SDL_Renderer *renderer;
     int selectedEntity;
-    
+
     std::vector<Entity> entities;
 };

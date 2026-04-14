@@ -36,6 +36,10 @@ public:
     float colorG = 0.39f;
     float colorB = 0.39f;
 
+    // Collision detection flag
+    bool solid = false;
+    bool colliding = false;
+
     // Prevent copying and allow moving
     Entity() = default;
     Entity(const Entity &) = delete;

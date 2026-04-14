@@ -110,6 +110,27 @@ void Engine::Update(float deltaTime)
     {
         entity.Update(deltaTime);
     }
+
+    // Reset collision state
+    for (auto &entity : entities)
+        entity.colliding = false;
+
+    // Collision Detection
+    for (int i = 0; i < (int)entities.size(); i++)
+    {
+        for (int j = i + 1; j < (int)entities.size(); j++)
+        {
+            if (entities[i].solid && entities[j].solid)
+            {
+                if (CheckCollision(entities[i], entities[j]))
+                {
+                    // Both set to true for now
+                    entities[i].colliding = true;
+                    entities[j].colliding = true;
+                }
+            }
+        }
+    }
 }
 
 // Render - clear screen, draw ImGui panels, present
@@ -245,6 +266,9 @@ void Engine::Render()
             entity.colorG = color[1];
             entity.colorB = color[2];
         }
+
+        ImGui::Separator();
+        ImGui::Checkbox("Solid", &entity.solid);
     }
     else
     {
@@ -268,11 +292,18 @@ void Engine::Render()
         int x = (int)(panelWidth + transform->x);
         int y = (int)(menuHeight + transform->y);
 
-        SDL_SetRenderDrawColor(renderer,
-                               (Uint8)(entity.colorR * 255),
-                               (Uint8)(entity.colorG * 255),
-                               (Uint8)(entity.colorB * 255),
-                               255);
+        if (entity.colliding)
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(renderer,
+                                   (Uint8)(entity.colorR * 255),
+                                   (Uint8)(entity.colorG * 255),
+                                   (Uint8)(entity.colorB * 255),
+                                   255);
+        }
 
         if (entity.shape == Shape::Rectangle)
         {
@@ -299,6 +330,27 @@ void Engine::Render()
     }
     ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
     SDL_RenderPresent(renderer);
+}
+
+// Collision Detection
+bool Engine::CheckCollision(Entity &a, Entity &b)
+{
+    Transform *ta = a.GetComponent<Transform>();
+    Transform *tb = b.GetComponent<Transform>();
+    if (!ta || !tb)
+        return false;
+
+    float aLeft = ta->x;
+    float aRight = ta->x + a.width;
+    float aTop = ta->y;
+    float aBottom = ta->y + a.height;
+
+    float bLeft = tb->x;
+    float bRight = tb->x + b.width;
+    float bTop = tb->y;
+    float bBottom = tb->y + b.height;
+
+    return aLeft < bRight && aRight > bLeft && aTop < bBottom && aBottom > bTop;
 }
 
 void Engine::Run()
