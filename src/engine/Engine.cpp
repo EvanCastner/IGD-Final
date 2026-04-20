@@ -194,119 +194,126 @@ void Engine::Render()
         ImGui::EndMainMenuBar();
     }
 
-    // Hierarchy Panel
-    ImGui::SetNextWindowPos(ImVec2(0, menuHeight), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
-    ImGui::Begin("Heirarchy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+    if (!runtime)
+    {    
+        // Hierarchy Panel
+        ImGui::SetNextWindowPos(ImVec2(0, menuHeight), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
+        ImGui::Begin("Heirarchy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
-    // Add entity button
-    if (ImGui::Button("Add Entity", ImVec2(-1, 0)))
-    {
-        entities.emplace_back();
-        Entity &newEntity = entities.back();
-        newEntity.name = "Entity: " + std::to_string(entities.size() - 1);
-        newEntity.AddComponent<Transform>();
-        selectedEntity = (int)entities.size() - 1;
+        // Add entity button
+        if (ImGui::Button("Add Entity", ImVec2(-1, 0)))
+        {
+            entities.emplace_back();
+            Entity &newEntity = entities.back();
+            newEntity.name = "Entity: " + std::to_string(entities.size() - 1);
+            newEntity.AddComponent<Transform>();
+            selectedEntity = (int)entities.size() - 1;
+        }
+
+        ImGui::Separator();
+
+        // Entity List
+        for (int i = 0; i < (int)entities.size(); i++)
+        {
+            bool selected = (selectedEntity == i);
+            std::string displayName = entities[i].name.empty() ? "(unnamed)" : entities[i].name;
+            if (ImGui::Selectable(displayName.c_str(), selected))
+                selectedEntity = i;
+        }
+
+        // Remove entity button
+        if (selectedEntity >= 0 && selectedEntity < (int)entities.size())
+        {
+            ImGui::Separator();
+            if (ImGui::Button("Remove Entity", ImVec2(-1, 0)))
+            {
+                entities.erase(entities.begin() + selectedEntity);
+                selectedEntity = -1;
+            }
+        }
+
+        ImGui::End();
     }
 
-    ImGui::Separator();
-
-    // Entity List
-    for (int i = 0; i < (int)entities.size(); i++)
+    if (!runtime)
     {
-        bool selected = (selectedEntity == i);
-        std::string displayName = entities[i].name.empty() ? "(unnamed)" : entities[i].name;
-        if (ImGui::Selectable(displayName.c_str(), selected))
-            selectedEntity = i;
+        // Inspector Panel
+        ImGui::SetNextWindowPos(ImVec2(W - panelWidth, menuHeight), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
+        ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+
+        if (selectedEntity >= 0 && selectedEntity < (int)entities.size())
+        {
+            Entity &entity = entities[selectedEntity];
+            // ImGui::Text("Name: %s", entity.name.c_str());
+            char nameBuf[64];
+            strncpy(nameBuf, entity.name.c_str(), sizeof(nameBuf));
+            nameBuf[sizeof(nameBuf) - 1] = '\0';
+            if (ImGui::InputText("##name", nameBuf, sizeof(nameBuf)))
+                entity.name = nameBuf;
+            ImGui::Separator();
+
+            // Shape Selector
+            ImGui::Text("Shape");
+            if (ImGui::RadioButton("Rectangle", entity.shape == Shape::Rectangle))
+                entity.shape = Shape::Rectangle;
+            ImGui::SameLine();
+            if (ImGui::RadioButton("Square", entity.shape == Shape::Square))
+                entity.shape = Shape::Square;
+            ImGui::SameLine();
+            if (ImGui::RadioButton("Circle", entity.shape == Shape::Circle))
+                entity.shape = Shape::Circle;
+
+            ImGui::Separator();
+
+            Transform *transform = entity.GetComponent<Transform>();
+            if (transform)
+            {
+                ImGui::Text("Transform");
+                ImGui::DragFloat("X", &transform->x, 1.0f);
+                ImGui::DragFloat("Y", &transform->y, 1.0f);
+            }
+
+            ImGui::Separator();
+            ImGui::Text("Size");
+            if (entity.shape == Shape::Rectangle)
+            {
+                ImGui::DragFloat("Width", &entity.width, 1.0f, 1.0f, 1000.0f);
+                ImGui::DragFloat("Height", &entity.height, 1.0f, 1.0f, 1000.0f);
+            }
+            else if (entity.shape == Shape::Square)
+            {
+                ImGui::DragFloat("Size", &entity.width, 1.0f, 1.0f, 1000.0f);
+                entity.height = entity.width;
+            }
+            else if (entity.shape == Shape::Circle)
+            {
+                ImGui::DragFloat("Radius", &entity.radius, 1.0f, 1.0f, 500.0f);
+            }
+
+            ImGui::Separator();
+            ImGui::Text("Color");
+            float color[3] = {entity.colorR, entity.colorG, entity.colorB};
+            if (ImGui::ColorEdit3("##color", color))
+            {
+                entity.colorR = color[0];
+                entity.colorG = color[1];
+                entity.colorB = color[2];
+            }
+
+            ImGui::Separator();
+            ImGui::Checkbox("Solid", &entity.solid);
+            ImGui::Checkbox("Goal", &entity.isGoal);
+        }
+        else
+        {
+            ImGui::Text("No entity selected");
+        }
+
+        ImGui::End();
     }
-
-    // Remove entity button
-    if (selectedEntity >= 0 && selectedEntity < (int)entities.size())
-    {
-        ImGui::Separator();
-        if (ImGui::Button("Remove Entity", ImVec2(-1, 0)))
-        {
-            entities.erase(entities.begin() + selectedEntity);
-            selectedEntity = -1;
-        }
-    }
-
-    ImGui::End();
-
-    // Inspector Panel
-    ImGui::SetNextWindowPos(ImVec2(W - panelWidth, menuHeight), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
-    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
-
-    if (selectedEntity >= 0 && selectedEntity < (int)entities.size())
-    {
-        Entity &entity = entities[selectedEntity];
-        // ImGui::Text("Name: %s", entity.name.c_str());
-        char nameBuf[64];
-        strncpy(nameBuf, entity.name.c_str(), sizeof(nameBuf));
-        nameBuf[sizeof(nameBuf) - 1] = '\0';
-        if (ImGui::InputText("##name", nameBuf, sizeof(nameBuf)))
-            entity.name = nameBuf;
-        ImGui::Separator();
-
-        // Shape Selector
-        ImGui::Text("Shape");
-        if (ImGui::RadioButton("Rectangle", entity.shape == Shape::Rectangle))
-            entity.shape = Shape::Rectangle;
-        ImGui::SameLine();
-        if (ImGui::RadioButton("Square", entity.shape == Shape::Square))
-            entity.shape = Shape::Square;
-        ImGui::SameLine();
-        if (ImGui::RadioButton("Circle", entity.shape == Shape::Circle))
-            entity.shape = Shape::Circle;
-
-        ImGui::Separator();
-
-        Transform *transform = entity.GetComponent<Transform>();
-        if (transform)
-        {
-            ImGui::Text("Transform");
-            ImGui::DragFloat("X", &transform->x, 1.0f);
-            ImGui::DragFloat("Y", &transform->y, 1.0f);
-        }
-
-        ImGui::Separator();
-        ImGui::Text("Size");
-        if (entity.shape == Shape::Rectangle)
-        {
-            ImGui::DragFloat("Width", &entity.width, 1.0f, 1.0f, 1000.0f);
-            ImGui::DragFloat("Height", &entity.height, 1.0f, 1.0f, 1000.0f);
-        }
-        else if (entity.shape == Shape::Square)
-        {
-            ImGui::DragFloat("Size", &entity.width, 1.0f, 1.0f, 1000.0f);
-            entity.height = entity.width;
-        }
-        else if (entity.shape == Shape::Circle)
-        {
-            ImGui::DragFloat("Radius", &entity.radius, 1.0f, 1.0f, 500.0f);
-        }
-
-        ImGui::Separator();
-        ImGui::Text("Color");
-        float color[3] = {entity.colorR, entity.colorG, entity.colorB};
-        if (ImGui::ColorEdit3("##color", color))
-        {
-            entity.colorR = color[0];
-            entity.colorG = color[1];
-            entity.colorB = color[2];
-        }
-
-        ImGui::Separator();
-        ImGui::Checkbox("Solid", &entity.solid);
-        ImGui::Checkbox("Goal", &entity.isGoal);
-    }
-    else
-    {
-        ImGui::Text("No entity selected");
-    }
-
-    ImGui::End();
+    
 
     // Render
     ImGui::Render();
