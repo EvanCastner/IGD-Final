@@ -7,8 +7,10 @@
 
 #include "../core/Entity.hpp"
 #include "runtime/SceneData.hpp"
+#include"runtime/Runtime.hpp"
 #include <SDL2/SDL.h>
 #include <vector>
+#include <memory>
 
 class Engine
 {
@@ -34,4 +36,5 @@ private:
     int selectedEntity;
 
     std::vector<Entity> entities;
+    std::unique_ptr<Runtime> runtime;
 };

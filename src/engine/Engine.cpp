@@ -72,6 +72,10 @@ void Engine::HandleEvents()
     while (SDL_PollEvent(&event))
     {
         ImGui_ImplSDL2_ProcessEvent(&event);
+
+        if (runtime)
+            runtime->HandleInput(event);
+
         if (event.type == SDL_QUIT)
             running = false;
 
@@ -79,7 +83,7 @@ void Engine::HandleEvents()
             running = false;
 
         // Click in viewport to place selected entity
-        if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+        if (!runtime && event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
         {
             float panelWidth = 300.0f;
             float menuHeight = ImGui::GetFrameHeight();
@@ -106,6 +110,18 @@ void Engine::HandleEvents()
 
 void Engine::Update(float deltaTime)
 {
+    // Runtime update
+    if (runtime)
+    {
+        runtime->Update(deltaTime);
+        if (runtime->isFinished())
+        {
+            runtime.reset();
+        }
+        return;
+    }
+
+    // Editor update
     for (auto &entity : entities)
     {
         entity.Update(deltaTime);
@@ -160,6 +176,20 @@ void Engine::Render()
         {
             ImGui::MenuItem("Settiings (coming soon)", nullptr, false, false);
             ImGui::EndMenu();
+        }
+        if (!runtime) 
+        {
+            if (ImGui::Button("Play"))
+            {   
+                runtime = std::make_unique<Runtime>(renderer, CaptureScene());
+            }
+        else 
+        {
+            if (ImGui::Button(" Stop "))
+            {
+                runtime.reset();
+            }
+        }
         }
         ImGui::EndMainMenuBar();
     }
@@ -283,49 +313,56 @@ void Engine::Render()
     SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
     SDL_RenderClear(renderer);
 
-    // Draw all entites that have a transform
-    for (auto &entity : entities)
+    if (runtime)
     {
-        Transform *transform = entity.GetComponent<Transform>();
-        if (!transform)
-            continue;
+        runtime->Render(panelWidth, menuHeight);
+    }
+    else 
+    {
+        // Draw all entites that have a transform
+        for (auto &entity : entities)
+        {
+            Transform *transform = entity.GetComponent<Transform>();
+            if (!transform)
+                continue;
 
-        int x = (int)(panelWidth + transform->x);
-        int y = (int)(menuHeight + transform->y);
+            int x = (int)(panelWidth + transform->x);
+            int y = (int)(menuHeight + transform->y);
 
-        if (entity.colliding)
-        {
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        }
-        else
-        {
-            SDL_SetRenderDrawColor(renderer,
-                                   (Uint8)(entity.colorR * 255),
-                                   (Uint8)(entity.colorG * 255),
-                                   (Uint8)(entity.colorB * 255),
-                                   255);
-        }
-
-        if (entity.shape == Shape::Rectangle)
-        {
-            SDL_Rect rect = {x, y, (int)entity.width, (int)entity.height};
-            SDL_RenderFillRect(renderer, &rect);
-        }
-        else if (entity.shape == Shape::Square)
-        {
-            SDL_Rect rect = {x, y, (int)entity.width, (int)entity.width};
-            SDL_RenderFillRect(renderer, &rect);
-        }
-        else if (entity.shape == Shape::Circle)
-        {
-            // Build circle with points since SDL Does not have one
-            int radius = (int)entity.radius;
-            for (int dy = -radius; dy <= radius; dy++)
+            if (entity.colliding)
             {
-                int dx = (int)sqrt((double)(radius * radius - dy * dy));
-                SDL_RenderDrawLine(renderer,
-                                   x - dx, y + dy,
-                                   x + dx, y + dy);
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            }
+            else
+            {
+                SDL_SetRenderDrawColor(renderer,
+                                    (Uint8)(entity.colorR * 255),
+                                    (Uint8)(entity.colorG * 255),
+                                    (Uint8)(entity.colorB * 255),
+                                    255);
+            }
+
+            if (entity.shape == Shape::Rectangle)
+            {
+                SDL_Rect rect = {x, y, (int)entity.width, (int)entity.height};
+                SDL_RenderFillRect(renderer, &rect);
+            }
+            else if (entity.shape == Shape::Square)
+            {
+                SDL_Rect rect = {x, y, (int)entity.width, (int)entity.width};
+                SDL_RenderFillRect(renderer, &rect);
+            }
+            else if (entity.shape == Shape::Circle)
+            {
+                // Build circle with points since SDL Does not have one
+                int radius = (int)entity.radius;
+                for (int dy = -radius; dy <= radius; dy++)
+                {
+                    int dx = (int)sqrt((double)(radius * radius - dy * dy));
+                    SDL_RenderDrawLine(renderer,
+                                    x - dx, y + dy,
+                                    x + dx, y + dy);
+                }
             }
         }
     }
