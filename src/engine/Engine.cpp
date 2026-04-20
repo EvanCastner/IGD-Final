@@ -179,17 +179,17 @@ void Engine::Render()
         }
         if (!runtime) 
         {
-            if (ImGui::Button("Play"))
+            if (ImGui::MenuItem("Play"))
             {   
                 runtime = std::make_unique<Runtime>(renderer, CaptureScene());
             }
+        }
         else 
         {
-            if (ImGui::Button(" Stop "))
+            if (ImGui::MenuItem(" Stop "))
             {
                 runtime.reset();
             }
-        }
         }
         ImGui::EndMainMenuBar();
     }
